@@ -1,0 +1,40 @@
+services:
+  server:
+    container_name: red_tetris-server
+    build:
+      context: ./server
+      args:
+        - PORT=${SERVER_PORT}
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      - REACT_APP_SERVER_PORT=${SERVER_PORT}
+      - REACT_APP_HOST_IP=${HOST_IP}
+    volumes:
+      - ./server/app:/app
+      - /app/node_modules
+    networks:
+      - red
+
+  client:
+    container_name: red_tetris-client
+    build:
+      context: ./client
+      args:
+        - PORT=${CLIENT_PORT}
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    environment:
+      - REACT_APP_SERVER_PORT=${SERVER_PORT}
+      - REACT_APP_CLIENT_PORT=${CLIENT_PORT}
+      - REACT_APP_HOST_IP=${HOST_IP}
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./client/app:/app
+      - /app/node_modules
+    networks:
+      - red
+
+networks:
+  red:
+    driver: bridge
